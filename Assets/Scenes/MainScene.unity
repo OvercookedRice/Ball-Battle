@@ -600,6 +600,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player_material: {fileID: 2100000, guid: 6aad16af89c37324b818db61109540bc, type: 2}
   opponent_material: {fileID: 2100000, guid: 0c49df482dd56b34b8ef98d353e6762e, type: 2}
+  greyscale_material: {fileID: 2100000, guid: 1c90c1a2fc79d464e89f21c5143f68c8, type: 2}
 --- !u!1 &1431499098
 GameObject:
   m_ObjectHideFlags: 0

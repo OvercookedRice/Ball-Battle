@@ -9,6 +9,10 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private Material player_material = null;
     [SerializeField] private Material opponent_material = null;
+    [SerializeField] private Material greyscale_material = null;
+    private Ball ball = null;
+    private Fence defender_fence = null;
+
     void Awake()
     {
         if (instance == null)
@@ -24,6 +28,20 @@ public class GameManager : MonoBehaviour
 
     public static GameManager GetInstance() => instance;
 
+    /******************************************
+    *                                         *
+    *      REGISTER/UNREGISTER RETRIEVAL      *
+    *                                         *
+    ******************************************/
+    public void RegisterBall(Ball ball)
+    {
+        this.ball = ball;
+    }
+
+    public void RegisterDefenderFence(Fence fence)
+    {
+        defender_fence = fence;
+    }
 
     /******************************************
     *                                         *
@@ -31,6 +49,8 @@ public class GameManager : MonoBehaviour
     *                                         *
     ******************************************/
     public Faction GetAttacker() => attacker;
+    public Ball GetBall() => ball;
+    public Fence GetDefenderFence() => defender_fence;
     public Material GetFactionMaterial(Faction side)
     {
         switch(side)
@@ -41,5 +61,5 @@ public class GameManager : MonoBehaviour
                 return opponent_material;
         }
     }
-
+    public Material GetGreyscaleMaterial() => greyscale_material;
 }
