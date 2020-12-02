@@ -3,14 +3,14 @@
     /// <summary>
     /// <para>Switch the object's data and behaviour based on its faction of this match.</para>
     /// <para>Only called once on new match start.</para>
-    /// <para><paramref name="faction"/>: Parent's Faction.</para>
+    /// <para><paramref name="player"/>: Parent</para>
     /// </summary>
-    /// <param name="faction"></param>
-    void Switch(Faction faction);
+    /// <param name="player"></param>
+    void Switch(Player player);
 
     /// <summary>
-    /// Get this SideSwitcher's faction.
+    /// Get this SideSwitcher's parent.
     /// </summary>
-    /// <returns>A Faction value corresponding to this element's side</returns>
-    Faction GetSide();
+    /// <returns>Player instance corresponding to this element's parent</returns>
+    Player GetPlayer();
 }

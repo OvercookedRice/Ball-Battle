@@ -11,11 +11,14 @@ public class Player : MonoBehaviour
     {
         OnNewMatch();
     }
+
     public void OnNewMatch()
     {
         foreach (GameObject _ in children_elements)
         {
-            _.GetComponent<ISideSwitcher>()?.Switch(faction);
+            _.GetComponent<ISideSwitcher>()?.Switch(this);
         }
     }
+
+    public Faction GetFaction() => faction;
 }

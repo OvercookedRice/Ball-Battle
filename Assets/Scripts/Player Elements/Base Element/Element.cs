@@ -4,15 +4,15 @@ using UnityEngine;
 
 public abstract class Element : MonoBehaviour, ISideSwitcher
 {
-    protected Faction side;
-    public virtual void Switch(Faction faction)
+    protected Player parent;
+    public virtual void Switch(Player player)
     {
         // Store the side
-        side = faction;
+        parent = player;
 
         // Change color based on the faction
-        gameObject.GetComponent<MeshRenderer>().material = GameManager.GetInstance().GetFactionMaterial(side);
+        gameObject.GetComponent<MeshRenderer>().material = GameManager.GetInstance().GetFactionMaterial(player.GetFaction());
     }
 
-    public Faction GetSide() => side;
+    public Player GetPlayer() => parent;
 }
