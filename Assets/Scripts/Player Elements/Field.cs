@@ -15,6 +15,10 @@ public class Field : Element
             // TODO
             // Spawn the ball randomly on this field
         }
+        else
+        {
+            GameManager.GetInstance().RegisterDefenderField(this);
+        }
     }
 
     public void Spawn(Vector3 pos)

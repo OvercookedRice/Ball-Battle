@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Material greyscale_material = null;
     private Ball ball = null;
     private Fence defender_fence = null;
+    private Gate defender_gate = null;
+    private Field defender_field = null;
 
     void Awake()
     {
@@ -43,6 +45,16 @@ public class GameManager : MonoBehaviour
         defender_fence = fence;
     }
 
+    public void RegisterDefenderGate(Gate gate)
+    {
+        defender_gate = gate;
+    }
+
+    public void RegisterDefenderField(Field field)
+    {
+        defender_field = field;
+    }
+
     /******************************************
     *                                         *
     *              DATA RETRIEVAL             *
@@ -51,6 +63,8 @@ public class GameManager : MonoBehaviour
     public Faction GetAttacker() => attacker;
     public Ball GetBall() => ball;
     public Fence GetDefenderFence() => defender_fence;
+    public Field GetDefenderField() => defender_field;
+    public Gate GetDefenderGate() => defender_gate;
     public Material GetFactionMaterial(Faction side)
     {
         switch(side)
