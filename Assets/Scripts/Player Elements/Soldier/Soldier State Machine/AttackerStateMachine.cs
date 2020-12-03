@@ -40,7 +40,7 @@ public class AttackerStateMachine : StateMachine
 
     public override void Initialize()
     {
-        inactivate_state = new Inactivate(this, false);
+        inactivate_state = new AttackerInactivate(this);
         activate_state = new AttackerActivate(this);
         move_straight_state = new AttackerMoveStraightState(this);
         chase_ball_state = new AttackerChaseBallState(this);
@@ -234,3 +234,50 @@ public class AttackerCaughtState : State
         state_machine.ChangeState((state_machine as AttackerStateMachine).InactivateState);
     }
 }
+
+public class AttackerInactivate : State
+{
+    private float elapsed_time;
+
+    bool first_time_using;
+
+    public AttackerInactivate(StateMachine state_machine) : base(state_machine)
+    {
+        first_time_using = true;
+    }
+
+    public override void Enter()
+    {
+        elapsed_time = 0f;
+
+        Soldier context = state_machine.GetContext();
+
+        context.Bench();
+        context.ChangeMaterial(true);
+    }
+
+    public override void Exit()
+    {
+        elapsed_time = 0f;
+
+        Soldier context = state_machine.GetContext();
+
+        context.Attack();
+        context.ChangeMaterial(false);
+        first_time_using = false;
+    }
+
+    public override void StateUpdate()
+    {
+        elapsed_time += Time.deltaTime;
+        if (!first_time_using && elapsed_time >= Constants.ATTACKER__INACTIVATE_WAIT_TIME)
+        {
+            state_machine.ChangeState();
+        }
+        else if (first_time_using && elapsed_time >= Constants.ATTACKER__SPAWN_TIME)
+        {
+            state_machine.ChangeState();
+        }
+    }
+}
+

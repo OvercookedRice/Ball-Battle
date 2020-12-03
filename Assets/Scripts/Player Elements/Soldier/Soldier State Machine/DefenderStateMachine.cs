@@ -14,14 +14,8 @@ public class DefenderStateMachine : StateMachine
         get { return chase_state; }
     }
 
-    public IState ReturnToOriginalState
-    {
-        get { return return_to_original_state; }
-    }
-
     private IState standby_state;
     private IState chase_state;
-    private IState return_to_original_state;
 
     private Vector3 original_position;
 
@@ -37,10 +31,9 @@ public class DefenderStateMachine : StateMachine
 
     public override void Initialize()
     {
-        inactivate_state = new Inactivate(this, true);
+        inactivate_state = new DefenderInactivate(this);
         standby_state = new DefenderStandby(this);
         chase_state = new DefenderChase(this);
-        return_to_original_state = new DefenderReturnToOriginal(this);
 
         current_state = inactivate_state;
 
@@ -102,7 +95,7 @@ public class DefenderChase : State
             {
                 holder.GetComponent<Soldier>().Caught();
 
-                state_machine.ChangeState((state_machine as DefenderStateMachine).ReturnToOriginalState);
+                state_machine.ChangeState((state_machine as DefenderStateMachine).InactivateState);
             }
             else
             {
@@ -113,26 +106,59 @@ public class DefenderChase : State
         }
         else
         {
-            state_machine.ChangeState((state_machine as DefenderStateMachine).ReturnToOriginalState);
+            state_machine.ChangeState((state_machine as DefenderStateMachine).InactivateState);
         }
 
     }
 }
 
-public class DefenderReturnToOriginal : State
+public class DefenderInactivate : State
 {
-    public DefenderReturnToOriginal(StateMachine state_machine) : base(state_machine)
-    { }
+    private float elapsed_time;
+
+    bool first_time_using;
+
+    public DefenderInactivate(StateMachine state_machine) : base(state_machine)
+    {
+        first_time_using = true;
+    }
 
     public override void Enter()
     {
+        elapsed_time = 0f;
+
+        Soldier context = state_machine.GetContext();
+        context.ChangeMaterial(true);
     }
 
     public override void Exit()
     {
+        elapsed_time = 0f;
+
+        Soldier context = state_machine.GetContext();
+        context.ChangeMaterial(false);
+        first_time_using = false;
     }
 
     public override void StateUpdate()
+    {
+        elapsed_time += Time.deltaTime;
+
+        // Run back to the original position before it becomes activated!
+        if (!first_time_using)
+            MoveToOriginal();
+
+        if (!first_time_using && elapsed_time >= Constants.DEFENDER__INACTIVATE_WAIT_TIME)
+        {
+            state_machine.ChangeState();
+        }
+        else if (first_time_using && elapsed_time >= Constants.DEFENDER__SPAWN_TIME)
+        {
+            state_machine.ChangeState();
+        }
+    }
+
+    private void MoveToOriginal()
     {
         DefenderStateMachine machine = state_machine as DefenderStateMachine;
         Soldier context = machine.GetContext();
@@ -140,10 +166,9 @@ public class DefenderReturnToOriginal : State
         Vector3 direction = (machine.GetOriginalPos() - context.transform.position);
         direction = new Vector3(direction.x, 0f, direction.z);
 
-        if (direction.sqrMagnitude <= 0.5f)
+        if (direction.sqrMagnitude <= 0.01f)
         {
             context.transform.position = machine.GetOriginalPos();
-            machine.ChangeState(machine.InactivateState);
         }
         else
         {
@@ -152,6 +177,6 @@ public class DefenderReturnToOriginal : State
             context.transform.forward = direction;
             context.transform.position += direction * Constants.DEFENDER__RETURN_TO_ORIGINAL_POSITION_SPEED_MULTIPLIER * Time.deltaTime;
         }
-        
     }
 }
+
