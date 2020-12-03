@@ -18,9 +18,7 @@ public class Gate : Element
     {
         if (collsion.CompareTag("Ball") && GetFaction() != GameManager.GetInstance().GetAttacker())
         {
-            // DO SOMETHING TO INDICATE THAT ATTACKER'S WON
-            //GameManager.GetInstance()
-            Debug.Log("Attacker's Won");
+            GameManager.GetInstance().NotifyMatchWinner((GetFaction() == Faction.Player ? MatchScenario.OpponentWon : MatchScenario.PlayerWon));
         }
     }
 }

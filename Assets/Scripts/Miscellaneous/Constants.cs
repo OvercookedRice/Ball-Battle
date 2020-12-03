@@ -19,9 +19,15 @@
 
     public const int ATTACKER__ENERGY_COST_TO_SPAWN = 2;
     public const int DEFENDER__ENERGY_COST_TO_SPAWN = 3;
+    public const int MATCHES = 5;
 }
 
 public enum Faction
 {
     Player, Opponent
+}
+
+public enum MatchScenario
+{
+    PlayerWon, OpponentWon, Draw
 }

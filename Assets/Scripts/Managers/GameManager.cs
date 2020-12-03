@@ -18,7 +18,13 @@ public class GameManager : MonoBehaviour
     private Gate defender_gate = null;
     private Field defender_field = null;
 
+    private MatchHolder match_holder = null;
+
+    private List<Player> players = null;
     private List<Soldier> attackers = null;
+    private List<Soldier> soldiers = null;
+
+    private bool is_wiping_lists = false;
 
     void Awake()
     {
@@ -38,6 +44,40 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         attackers = new List<Soldier>();
+        soldiers = new List<Soldier>();
+        players = new List<Player>();
+    }
+
+    public void StartOver()
+    {
+        is_wiping_lists = true;
+
+        foreach(Soldier _ in soldiers)
+        {
+            _.Bench(true);
+        }
+
+        is_wiping_lists = false;
+        if (ball != null)
+        {
+            Destroy(ball.gameObject);
+            ball = null;
+        }
+
+        soldiers.Clear();
+        attackers.Clear();
+
+        defender_fence = null;
+        defender_gate = null;
+        defender_field = null;
+
+        attacker = (attacker == Faction.Player ? Faction.Opponent : Faction.Player);
+
+        foreach (Player _ in players)
+        {
+            _.OnNewMatch();
+        }
+
     }
     /******************************************
     *                                         *
@@ -52,6 +92,7 @@ public class GameManager : MonoBehaviour
             Instantiate(spawning_ball, position + Vector3.up * ball_height, Quaternion.identity);
         }
     }
+
     /******************************************
     *                                         *
     *      REGISTER/UNREGISTER RETRIEVAL      *
@@ -77,6 +118,22 @@ public class GameManager : MonoBehaviour
         defender_field = field;
     }
 
+    public void RegisterSoldier(Soldier soldier)
+    {
+        if (!soldiers.Contains(soldier))
+        {
+            soldiers.Add(soldier);
+        }
+    }
+
+    public void UnregisterSoldier(Soldier soldier)
+    {
+        if (!is_wiping_lists && soldiers.Contains(soldier))
+        {
+            soldiers.Remove(soldier);
+        }
+    }
+
     public void RegisterAttacker(Soldier soldier)
     {
         if (!attackers.Contains(soldier))
@@ -93,6 +150,49 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void RegisterMatchHolder(MatchHolder match_holder)
+    {
+        this.match_holder = match_holder;
+    }
+
+    public void UnregisterMatchHolder()
+    {
+        match_holder = null;
+    }
+
+    public void RegisterPlayer(Player player)
+    {
+        if (!players.Contains(player))
+        {
+            players.Add(player);
+        }
+    }
+
+    /******************************************
+    *                                         *
+    *           NOTIFICATION CENTER           *
+    *                                         *
+    ******************************************/
+
+    public void NotifyWinner(bool is_player)
+    {
+        // DO SOMETHING HERE
+    }
+
+    public void NotifyDraw()
+    {
+        // GO TO THE PROCEDURAL GENERATOR THING
+    }
+
+    public void NotifyMatchWinner(MatchScenario scenario)
+    {
+        match_holder.NotifyMatchOver(scenario);
+
+        if (!match_holder.GameOver())
+        {
+            StartOver();
+        }
+    }
     /******************************************
     *                                         *
     *              DATA RETRIEVAL             *

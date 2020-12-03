@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         OnNewMatch();
+        GameManager.GetInstance().RegisterPlayer(this);
     }
 
     public void OnNewMatch()

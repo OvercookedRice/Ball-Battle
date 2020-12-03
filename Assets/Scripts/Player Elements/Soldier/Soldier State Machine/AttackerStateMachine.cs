@@ -212,8 +212,9 @@ public class AttackerCaughtState : State
             if (others.Count < 1)
             {
                 // Notify that match is over!
-                //GameManager.GetInstance()
-                Debug.Log("Defender's Won");
+                Faction _ = context.GetFaction();
+                GameManager.GetInstance().NotifyMatchWinner((_ == Faction.Player ? MatchScenario.OpponentWon : MatchScenario.PlayerWon));
+
                 return;
             }
 

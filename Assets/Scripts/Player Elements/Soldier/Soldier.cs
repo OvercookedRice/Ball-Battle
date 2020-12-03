@@ -16,6 +16,8 @@ public class Soldier : Element
         GameManager GM = GameManager.GetInstance();
         mesh_renderer.material = GM.GetFactionMaterial(parent.GetFaction());
 
+        GM.RegisterSoldier(this);
+
         if (GM.GetAttacker() == player.GetFaction())
         {
             state_machine = new AttackerStateMachine(this);
@@ -72,6 +74,10 @@ public class Soldier : Element
         state_machine.ChangeState((state_machine as DefenderStateMachine).ChaseState);
     }
    
+    void OnEnable()
+    {
+        DisableDetection();
+    }
     public void Attack() => GameManager.GetInstance().RegisterAttacker(this);
     public void Bench(bool kill = false)
     {
@@ -82,7 +88,8 @@ public class Soldier : Element
 
         if (kill)
         {
-            Destroy(gameObject);
+            GameManager.GetInstance().UnregisterSoldier(this);
+            gameObject.Kill();
         }
     }
     void Update()
