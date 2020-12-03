@@ -2,7 +2,7 @@
 {
     public const float ATTACKER__ENERGY_REGENERATION_RATE = 0.5f;
     public const float ATTACKER__SPAWN_TIME = 0.5f;
-    public const float ATTACKER__SQUARE_DISTANCE_TO_CAPTURE_BALL = 1f;
+    public const float ATTACKER__SQUARE_DISTANCE_TO_CAPTURE_BALL = 2f;
     public const float ATTACKER__INACTIVATE_WAIT_TIME = 2.5f;
     public const float ATTACKER__NORMAL_SPEED_MULTIPLIER = 1.5f;
     public const float ATTACKER__CARRY_SPEED_MULTIPLIER = 0.75f;
