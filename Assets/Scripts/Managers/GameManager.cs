@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Material player_material = null;
     [SerializeField] private Material opponent_material = null;
     [SerializeField] private Material greyscale_material = null;
+    [SerializeField] private GameObject spawning_ball = null;
 
     private Ball ball = null;
     private Fence defender_fence = null;
@@ -38,7 +39,19 @@ public class GameManager : MonoBehaviour
     {
         attackers = new List<Soldier>();
     }
-
+    /******************************************
+    *                                         *
+    *            SPAWN BALL SECTION           *
+    *                                         *
+    ******************************************/
+    public void SpawnBall(Vector3 position)
+    {
+        if (ball == null)
+        {
+            float ball_height = spawning_ball.GetComponentInChildren<MeshRenderer>().bounds.extents.y;
+            Instantiate(spawning_ball, position + Vector3.up * ball_height, Quaternion.identity);
+        }
+    }
     /******************************************
     *                                         *
     *      REGISTER/UNREGISTER RETRIEVAL      *
