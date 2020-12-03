@@ -30,6 +30,7 @@ public class DetectionCircle : MonoBehaviour
 
         // Then put it back to where it should be
         transform.parent = parent;
+
     }
 
     void OnTriggerEnter(Collider collision)

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -10,10 +11,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Material player_material = null;
     [SerializeField] private Material opponent_material = null;
     [SerializeField] private Material greyscale_material = null;
+
     private Ball ball = null;
     private Fence defender_fence = null;
     private Gate defender_gate = null;
     private Field defender_field = null;
+
+    private List<Soldier> attackers = null;
 
     void Awake()
     {
@@ -29,6 +33,11 @@ public class GameManager : MonoBehaviour
     }
 
     public static GameManager GetInstance() => instance;
+
+    void Start()
+    {
+        attackers = new List<Soldier>();
+    }
 
     /******************************************
     *                                         *
@@ -55,6 +64,22 @@ public class GameManager : MonoBehaviour
         defender_field = field;
     }
 
+    public void RegisterAttacker(Soldier soldier)
+    {
+        if (!attackers.Contains(soldier))
+        {
+            attackers.Add(soldier);
+        }
+    }
+
+    public void UnregisterAttacker(Soldier soldier)
+    {
+        if (attackers.Contains(soldier))
+        {
+            attackers.Remove(soldier);
+        }
+    }
+
     /******************************************
     *                                         *
     *              DATA RETRIEVAL             *
@@ -65,6 +90,12 @@ public class GameManager : MonoBehaviour
     public Fence GetDefenderFence() => defender_fence;
     public Field GetDefenderField() => defender_field;
     public Gate GetDefenderGate() => defender_gate;
+    public List<Soldier> GetAttackers(Soldier except = null)
+    {
+        if (except == null) return attackers;
+
+        return attackers.Where(x => x != except).ToList();
+    }
     public Material GetFactionMaterial(Faction side)
     {
         switch(side)

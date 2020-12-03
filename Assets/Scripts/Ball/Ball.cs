@@ -5,6 +5,8 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
     Soldier parent;
+    Transform passing_target;
+
     void Start()
     {
         parent = null;
@@ -17,6 +19,7 @@ public class Ball : MonoBehaviour
 
         parent = to;
         transform.parent = to.transform;
+        passing_target = null;
     }
 
     public void Detach()
@@ -25,7 +28,24 @@ public class Ball : MonoBehaviour
         parent = null;
     }
 
+    public void Pass(Soldier to)
+    {
+        passing_target = to.transform;
+    }
+
     public Soldier GetHolder() => parent;
     public float SqrDistanceTo(Transform to) => (transform.position - to.position).sqrMagnitude;
     public bool IsAttached() => transform.parent != null;
+
+    void Update()
+    {
+        if (passing_target != null)
+        {
+            Vector3 direction = (passing_target.position - transform.position).normalized;
+            direction = new Vector3(direction.x, 0f, direction.z);
+
+            transform.forward = direction;
+            transform.position += direction * Constants.BALL__SPEED * Time.deltaTime;
+        }
+    }
 }

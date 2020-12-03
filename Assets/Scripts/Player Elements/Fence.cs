@@ -17,7 +17,7 @@ public class Fence : Element
     {
         if (collision.CompareTag("Soldier") && collision.GetComponent<Element>().GetFaction() != GetFaction())
         {
-            Destroy(collision.gameObject);
+            collision.GetComponent<Soldier>().Bench(true);
         }
     }
 }

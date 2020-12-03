@@ -13,9 +13,10 @@ public class Soldier : Element
     {
         parent = player;
 
-        mesh_renderer.material = GameManager.GetInstance().GetFactionMaterial(parent.GetFaction());
+        GameManager GM = GameManager.GetInstance();
+        mesh_renderer.material = GM.GetFactionMaterial(parent.GetFaction());
 
-        if (GameManager.GetInstance().GetAttacker() == player.GetFaction())
+        if (GM.GetAttacker() == player.GetFaction())
         {
             state_machine = new AttackerStateMachine(this);
         }
@@ -69,6 +70,20 @@ public class Soldier : Element
     public void Chase()
     {
         state_machine.ChangeState((state_machine as DefenderStateMachine).ChaseState);
+    }
+   
+    public void Attack() => GameManager.GetInstance().RegisterAttacker(this);
+    public void Bench(bool kill = false)
+    {
+        if (GetFaction() == GameManager.GetInstance().GetAttacker())
+        {
+            GameManager.GetInstance().UnregisterAttacker(this);
+        }
+
+        if (kill)
+        {
+            Destroy(gameObject);
+        }
     }
     void Update()
     {

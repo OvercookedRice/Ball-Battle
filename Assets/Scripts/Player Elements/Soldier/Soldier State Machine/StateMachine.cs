@@ -86,13 +86,25 @@ public class Inactivate : State
     public override void Enter()
     {
         elapsed_time = 0f;
-        state_machine.GetContext().ChangeMaterial(true);
+
+        Soldier context = state_machine.GetContext();
+        if (context.GetFaction() == GameManager.GetInstance().GetAttacker())
+        {
+            context.Bench();
+        }
+        context.ChangeMaterial(true);
     }
 
     public override void Exit()
     {
         elapsed_time = 0f;
-        state_machine.GetContext().ChangeMaterial(false);
+
+        Soldier context = state_machine.GetContext();
+        if (context.GetFaction() == GameManager.GetInstance().GetAttacker())
+        {
+            context.Attack();
+        }
+        context.ChangeMaterial(false);
         first_time_using = false;
     }
 

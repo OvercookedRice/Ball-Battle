@@ -25,8 +25,7 @@ public class Field : Element
     {
         GameObject _ = Instantiate(soldier, 
                                     pos + Vector3.up * soldier.GetComponentInChildren<MeshRenderer>().bounds.extents.y, 
-                                    Quaternion.identity,
-                                    transform
+                                    Quaternion.identity
                                 );
         _.GetComponent<ISideSwitcher>().Switch(parent);
     }

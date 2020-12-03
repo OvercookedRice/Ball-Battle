@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class AttackerStateMachine : StateMachine
@@ -201,9 +202,25 @@ public class AttackerCaughtState : State
     public override void Enter()
     {
         Ball ball = GameManager.GetInstance().GetBall();
-        if (ball?.GetHolder() == state_machine.GetContext())
+        Soldier context = state_machine.GetContext();
+
+        if (ball?.GetHolder() == context)
         {
             ball.Detach();
+            List<Soldier> others = GameManager.GetInstance().GetAttackers(context);
+
+            if (others.Count < 1)
+            {
+                // Notify that match is over!
+                //GameManager.GetInstance()
+                return;
+            }
+
+            Soldier closest = others.Aggregate(others[0], 
+                            (x, y) => (context.transform.position - x.transform.position).sqrMagnitude < (context.transform.position - y.transform.position).sqrMagnitude ? 
+                            x : y);
+
+            ball.Pass(closest);
         }
     }
 
