@@ -213,6 +213,7 @@ public class AttackerCaughtState : State
             {
                 // Notify that match is over!
                 //GameManager.GetInstance()
+                Debug.Log("Defender's Won");
                 return;
             }
 

@@ -13,4 +13,14 @@ public class Gate : Element
             GameManager.GetInstance().RegisterDefenderGate(this);
         }
     }
+
+    void OnTriggerEnter(Collider collsion)
+    {
+        if (collsion.CompareTag("Ball") && GetFaction() != GameManager.GetInstance().GetAttacker())
+        {
+            // DO SOMETHING TO INDICATE THAT ATTACKER'S WON
+            //GameManager.GetInstance()
+            Debug.Log("Attacker's Won");
+        }
+    }
 }

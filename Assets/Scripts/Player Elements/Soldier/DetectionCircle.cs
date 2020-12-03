@@ -33,7 +33,7 @@ public class DetectionCircle : MonoBehaviour
 
     }
 
-    void OnTriggerEnter(Collider collision)
+    void OnTriggerStay(Collider collision)
     {
         if (collision.CompareTag("Soldier") && GameManager.GetInstance().GetBall()?.GetHolder() == collision.GetComponent<Soldier>())
         {
