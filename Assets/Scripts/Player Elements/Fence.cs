@@ -12,4 +12,12 @@ public class Fence : Element
             GameManager.GetInstance().RegisterDefenderFence(this);
         }
     }
+
+    void OnTriggerEnter(Collider collision)
+    {
+        if (collision.CompareTag("Soldier") && collision.GetComponent<Element>().GetFaction() != GetFaction())
+        {
+            Destroy(collision.gameObject);
+        }
+    }
 }

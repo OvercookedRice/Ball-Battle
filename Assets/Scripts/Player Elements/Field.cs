@@ -24,7 +24,7 @@ public class Field : Element
     public void Spawn(Vector3 pos)
     {
         GameObject _ = Instantiate(soldier, 
-                                    pos + Vector3.up * soldier.GetComponent<MeshRenderer>().bounds.extents.y, 
+                                    pos + Vector3.up * soldier.GetComponentInChildren<MeshRenderer>().bounds.extents.y, 
                                     Quaternion.identity,
                                     transform
                                 );

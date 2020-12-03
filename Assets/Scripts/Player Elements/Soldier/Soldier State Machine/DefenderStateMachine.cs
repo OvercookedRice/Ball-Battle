@@ -95,7 +95,7 @@ public class DefenderChase : State
         {
             Soldier context = state_machine.GetContext();
 
-            Vector3 direction = (holder.position - context.transform.position).normalized;
+            Vector3 direction = (holder.position - context.transform.position);
             direction = new Vector3(direction.x, 0f, direction.z);
 
             if (direction.sqrMagnitude <= Constants.DEFENDER__SQUARE_DISTANCE_TO_CATCH)
@@ -106,6 +106,7 @@ public class DefenderChase : State
             }
             else
             {
+                direction = direction.normalized;
                 context.transform.forward = direction;
                 context.transform.position += direction * Constants.DEFENDER__NORMAL_SPEED_MULTIPLIER * Time.deltaTime;
             }

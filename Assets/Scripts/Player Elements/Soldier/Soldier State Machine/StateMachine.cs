@@ -99,11 +99,11 @@ public class Inactivate : State
     public override void StateUpdate()
     {
         elapsed_time += Time.deltaTime;
-        if (elapsed_time >= inactivate_time && !first_time_using)
+        if (!first_time_using && elapsed_time >= inactivate_time)
         {
             state_machine.ChangeState();
         }
-        else if (elapsed_time >= (is_defender ? Constants.DEFENDER__SPAWN_TIME : Constants.ATTACKER__SPAWN_TIME))
+        else if (first_time_using && elapsed_time >= (is_defender ? Constants.DEFENDER__SPAWN_TIME : Constants.ATTACKER__SPAWN_TIME))
         {
             state_machine.ChangeState();
         }

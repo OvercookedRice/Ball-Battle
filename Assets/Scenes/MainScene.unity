@@ -1056,16 +1056,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 122319113, guid: 63df1b87ddfec4545a69d463a325937b, type: 3}
-      propertyPath: soldier
-      value: 
-      objectReference: {fileID: 7472344239791818250, guid: 84291195cc136d14d93fd13dff7b6ed2,
-        type: 3}
-    - target: {fileID: 1376001750, guid: 63df1b87ddfec4545a69d463a325937b, type: 3}
-      propertyPath: soldier
-      value: 
-      objectReference: {fileID: 7472344239791818250, guid: 84291195cc136d14d93fd13dff7b6ed2,
-        type: 3}
     - target: {fileID: 1482977666366107260, guid: 63df1b87ddfec4545a69d463a325937b,
         type: 3}
       propertyPath: m_LocalPosition.x

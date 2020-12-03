@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class Soldier : Element
 {
+    [SerializeField] protected MeshRenderer mesh_renderer;
     protected StateMachine state_machine = null;
     [SerializeField] protected DetectionCircle detection_circle = null;
     private DetectionCircle real_circle = null;
 
     public override void Switch(Player player)
     {
-        base.Switch(player);
+        parent = player;
+
+        mesh_renderer.material = GameManager.GetInstance().GetFactionMaterial(parent.GetFaction());
 
         if (GameManager.GetInstance().GetAttacker() == player.GetFaction())
         {
@@ -26,12 +29,12 @@ public class Soldier : Element
     {
         if (inactivate)
         {
-            GetComponent<MeshRenderer>().material = GameManager.GetInstance()
+            mesh_renderer.material = GameManager.GetInstance()
                 .GetGreyscaleMaterial();
         }
         else
         {
-            GetComponent<MeshRenderer>().material = GameManager.GetInstance()
+            mesh_renderer.material = GameManager.GetInstance()
                 .GetFactionMaterial(parent.GetFaction());
         }
     }
@@ -40,7 +43,7 @@ public class Soldier : Element
     {
         if (real_circle == null)
         {
-            Vector3 extents = GetComponent<MeshRenderer>().bounds.extents;
+            Vector3 extents = mesh_renderer.bounds.extents;
 
             real_circle = Instantiate(detection_circle, transform.position + (Vector3.down * 0.98f) * extents.y, Quaternion.Euler(-90, 0, 0), transform);
         }
@@ -61,6 +64,11 @@ public class Soldier : Element
         {
             state_machine.ChangeState((state_machine as AttackerStateMachine).CaughtState);
         }
+    }
+
+    public void Chase()
+    {
+        state_machine.ChangeState((state_machine as DefenderStateMachine).ChaseState);
     }
     void Update()
     {

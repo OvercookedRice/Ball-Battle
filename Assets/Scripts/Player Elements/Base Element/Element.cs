@@ -15,4 +15,5 @@ public abstract class Element : MonoBehaviour, ISideSwitcher
     }
 
     public Player GetPlayer() => parent;
+    public Faction GetFaction() => parent.GetFaction();
 }

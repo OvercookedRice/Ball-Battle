@@ -43,6 +43,7 @@ public class AttackerStateMachine : StateMachine
         activate_state = new AttackerActivate(this);
         move_straight_state = new AttackerMoveStraightState(this);
         chase_ball_state = new AttackerChaseBallState(this);
+        caught_state = new AttackerCaughtState(this);
         move_towards_the_gate_state = new AttackerMoveTowardsTheGateState(this);
 
         current_state = inactivate_state;
