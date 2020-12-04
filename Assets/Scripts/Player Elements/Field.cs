@@ -14,6 +14,8 @@ public class Field : Element
 
         if (parent.GetFaction() == GameManager.GetInstance().GetAttacker())
         {
+            if (GameManager.GetInstance().IsPenalty()) return;
+
             // Spawn the ball randomly on this field
             Vector3 extents = GetComponent<MeshRenderer>().bounds.extents;
 

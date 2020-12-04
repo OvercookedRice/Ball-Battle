@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     private List<Soldier> soldiers = null;
 
     private bool is_wiping_lists = false;
+    private bool playing_regular_game = true;
 
     void Awake()
     {
@@ -49,11 +50,13 @@ public class GameManager : MonoBehaviour
         soldiers = new List<Soldier>();
         players = new List<Player>();
 
-        StartOver();
+        StartPenalty();
     }
 
     public void StartOver()
     {
+        playing_regular_game = true;
+
         match_holder.ShowScore();
 
         is_wiping_lists = true;
@@ -87,15 +90,33 @@ public class GameManager : MonoBehaviour
 
         time_counter.TeaBreak();
     }
-
-    public void StartMatch()
+    public void StartPenalty()
     {
+        playing_regular_game = false;
+
         foreach (Player _ in players)
         {
-            _.Recharge();
+            _.OnNewMatch();
         }
 
-        match_holder.HideScore();
+        time_counter.TeaBreak();
+    }
+    public void StartMatch()
+    {
+        if (playing_regular_game)
+        {
+            foreach (Player _ in players)
+            {
+                _.Recharge();
+            }
+
+            match_holder.HideScore();
+        }
+        else
+        {
+
+        }
+
         time_counter.StartOver();
     }
     /******************************************
@@ -238,4 +259,6 @@ public class GameManager : MonoBehaviour
         }
     }
     public Material GetGreyscaleMaterial() => greyscale_material;
+
+    public bool IsPenalty() => !playing_regular_game;
 }
