@@ -5,7 +5,11 @@ using UnityEngine;
 public class Soldier : Element
 {
     [SerializeField] protected MeshRenderer mesh_renderer;
+    [SerializeField] protected GameObject arrow;
+    [SerializeField] protected GameObject highlighter;
+
     protected StateMachine state_machine = null;
+
     [SerializeField] protected DetectionCircle detection_circle = null;
     private DetectionCircle real_circle = null;
 
@@ -42,6 +46,11 @@ public class Soldier : Element
         }
     }
 
+    /***********************************
+     *                                 *
+     *      ENABLE/DISABLE SECTION     *
+     *                                 *
+     ***********************************/
     public void EnableDetection()
     {
         if (real_circle == null)
@@ -61,6 +70,25 @@ public class Soldier : Element
         real_circle?.gameObject.SetActive(false);
     }
 
+    public void EnableMovingDirection()
+    {
+        arrow.SetActive(true);
+    }
+
+    public void DisableMovingDirection()
+    {
+        arrow.SetActive(false);
+    }
+
+    public void EnableHighlighter()
+    {
+        highlighter.SetActive(true);
+    }
+
+    public void DisableHighlighter()
+    {
+        highlighter.SetActive(false);
+    }
     public void Caught()
     {
         if (parent.GetFaction() == GameManager.GetInstance().GetAttacker())
@@ -77,6 +105,8 @@ public class Soldier : Element
     void OnEnable()
     {
         DisableDetection();
+        DisableHighlighter();
+        DisableMovingDirection();
     }
     public void Attack() => GameManager.GetInstance().RegisterAttacker(this);
     public void Bench(bool kill = false)

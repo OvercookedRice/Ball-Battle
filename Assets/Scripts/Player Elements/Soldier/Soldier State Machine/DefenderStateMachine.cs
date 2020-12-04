@@ -74,12 +74,16 @@ public class DefenderChase : State
     {
         ball = GameManager.GetInstance().GetBall();
         holder = ball.GetHolder().transform;
+        state_machine.GetContext().EnableMovingDirection();
     }
 
     public override void Exit()
     {
         ball = null;
         holder = null;
+
+        state_machine.GetContext().DisableMovingDirection();
+
     }
 
     public override void StateUpdate()

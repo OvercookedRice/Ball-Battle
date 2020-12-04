@@ -98,11 +98,14 @@ public class AttackerMoveStraightState : State
         direction = (_.z > 0f ? 1 : -1) * Vector3.forward;
 
         state_machine.GetContext().transform.forward = direction;
+        state_machine.GetContext().EnableMovingDirection();
     }
 
     public override void Exit()
     {
         direction = Vector3.zero;
+        state_machine.GetContext().DisableMovingDirection();
+
     }
 
     public override void StateUpdate()
@@ -130,11 +133,13 @@ public class AttackerChaseBallState : State
     public override void Enter()
     {
         ball_instance = GameManager.GetInstance().GetBall();
+        state_machine.GetContext().EnableMovingDirection();
     }
 
     public override void Exit()
     {
         ball_instance = null;
+        state_machine.GetContext().DisableMovingDirection();
     }
 
     public override void StateUpdate()
@@ -176,11 +181,15 @@ public class AttackerMoveTowardsTheGateState : State
     public override void Enter()
     {
         defender_gate = GameManager.GetInstance().GetDefenderGate();
+        state_machine.GetContext().EnableMovingDirection();
+        state_machine.GetContext().EnableHighlighter();
     }
 
     public override void Exit()
     {
         defender_gate = null;
+        state_machine.GetContext().DisableMovingDirection();
+        state_machine.GetContext().DisableHighlighter();
     }
 
     public override void StateUpdate()
