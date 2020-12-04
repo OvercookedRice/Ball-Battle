@@ -19,6 +19,8 @@ public class Ball : MonoBehaviour
 
         parent = to;
         transform.parent = to.transform;
+
+        transform.localPosition = new Vector3(0, transform.localPosition.y, 1f);
         passing_target = null;
     }
 

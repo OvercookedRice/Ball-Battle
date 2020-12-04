@@ -17,8 +17,14 @@
 
     public const float BALL__SPEED = 1.5f;
 
+    public const float MATCH__TIME_LIMIT = 140f;
+
     public const int ATTACKER__ENERGY_COST_TO_SPAWN = 2;
+    public const int ATTACKER__MAXIMUM_ENGERGY = 6;
+
     public const int DEFENDER__ENERGY_COST_TO_SPAWN = 3;
+    public const int DEFENDER__MAXIMUM_ENERGY = 6;
+
     public const int MATCHES = 5;
 }
 

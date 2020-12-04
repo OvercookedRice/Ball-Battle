@@ -1,12 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private Faction faction = Faction.Player;
     [SerializeField] private GameObject[] children_elements;
+    [SerializeField] private TMP_Text indication_text;
+    
+    public EnergyBar Energy
+    {
+        get { return energy_bar; }
+        set { energy_bar = value; }
+    }
 
+    private EnergyBar energy_bar = null;
     void Start()
     {
         OnNewMatch();
@@ -15,6 +24,9 @@ public class Player : MonoBehaviour
 
     public void OnNewMatch()
     {
+        indication_text.text = (faction == Faction.Player ? "Player" : "Enemy - AI");
+        indication_text.text += (faction == GameManager.GetInstance().GetAttacker() ? " (Attacker)" : " (Defender)");
+
         foreach (GameObject _ in children_elements)
         {
             _.GetComponent<ISideSwitcher>()?.Switch(this);

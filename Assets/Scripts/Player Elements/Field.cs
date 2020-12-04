@@ -33,8 +33,13 @@ public class Field : Element
 
     public void Spawn(Vector3 pos)
     {
-        GameObject _ = soldier.Spawn(pos + Vector3.up * soldier.GetComponentInChildren<MeshRenderer>().bounds.extents.y);
+        bool is_defender = (GetFaction() == GameManager.GetInstance().GetAttacker() ? false : true);
 
-        _.GetComponent<ISideSwitcher>().Switch(parent);
+        if (parent.Energy.CanUseEnergy(is_defender ? Constants.DEFENDER__ENERGY_COST_TO_SPAWN : Constants.ATTACKER__ENERGY_COST_TO_SPAWN))
+        {
+            GameObject _ = soldier.Spawn(pos + Vector3.up * soldier.GetComponentInChildren<MeshRenderer>().bounds.extents.y);
+
+            _.GetComponent<ISideSwitcher>().Switch(parent);
+        }        
     }
 }

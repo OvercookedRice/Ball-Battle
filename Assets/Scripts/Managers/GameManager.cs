@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     private Field defender_field = null;
 
     private MatchHolder match_holder = null;
+    private TimeCounter time_counter = null;
 
     private List<Player> players = null;
     private List<Soldier> attackers = null;
@@ -77,6 +78,8 @@ public class GameManager : MonoBehaviour
         {
             _.OnNewMatch();
         }
+
+        time_counter.StartOver();
 
     }
     /******************************************
@@ -168,6 +171,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void RegisterTimeCounter(TimeCounter time_counter)
+    {
+        this.time_counter = time_counter;
+    }
     /******************************************
     *                                         *
     *           NOTIFICATION CENTER           *
