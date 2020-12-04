@@ -37,3 +37,8 @@ public enum MatchScenario
 {
     PlayerWon, OpponentWon, Draw
 }
+
+public enum Direction
+{
+    East, West, North, South
+}

@@ -24,8 +24,11 @@ public class Player : MonoBehaviour
 
     public void OnNewMatch()
     {
-        indication_text.text = (faction == Faction.Player ? "Player" : "Enemy - AI");
-        indication_text.text += (faction == GameManager.GetInstance().GetAttacker() ? " (Attacker)" : " (Defender)");
+        if (indication_text != null)
+        {
+            indication_text.text = (faction == Faction.Player ? "Player" : "Enemy - AI");
+            indication_text.text += (faction == GameManager.GetInstance().GetAttacker() ? " (Attacker)" : " (Defender)");
+        }
 
         foreach (GameObject _ in children_elements)
         {
