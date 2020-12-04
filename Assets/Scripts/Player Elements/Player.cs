@@ -33,5 +33,15 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void Recharge()
+    {
+        energy_bar.StartFill();
+    }
+
+    public void Discharge()
+    {
+        energy_bar.Empty();
+    }
+
     public Faction GetFaction() => faction;
 }

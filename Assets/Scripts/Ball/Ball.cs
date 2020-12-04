@@ -20,7 +20,7 @@ public class Ball : MonoBehaviour
         parent = to;
         transform.parent = to.transform;
 
-        transform.localPosition = new Vector3(0, transform.localPosition.y, 1f);
+        transform.localPosition = new Vector3(0, transform.localPosition.y, 1.25f);
         passing_target = null;
     }
 

@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
     private static GameManager instance = null;
-    private Faction attacker = Faction.Player;
+    private Faction attacker = Faction.Opponent;
 
     [SerializeField] private Material player_material = null;
     [SerializeField] private Material opponent_material = null;
@@ -47,10 +48,14 @@ public class GameManager : MonoBehaviour
         attackers = new List<Soldier>();
         soldiers = new List<Soldier>();
         players = new List<Player>();
+
+        StartOver();
     }
 
     public void StartOver()
     {
+        match_holder.ShowScore();
+
         is_wiping_lists = true;
 
         foreach(Soldier _ in soldiers)
@@ -77,10 +82,21 @@ public class GameManager : MonoBehaviour
         foreach (Player _ in players)
         {
             _.OnNewMatch();
+            _.Discharge();
         }
 
-        time_counter.StartOver();
+        time_counter.TeaBreak();
+    }
 
+    public void StartMatch()
+    {
+        foreach (Player _ in players)
+        {
+            _.Recharge();
+        }
+
+        match_holder.HideScore();
+        time_counter.StartOver();
     }
     /******************************************
     *                                         *
@@ -180,11 +196,6 @@ public class GameManager : MonoBehaviour
     *           NOTIFICATION CENTER           *
     *                                         *
     ******************************************/
-
-    public void NotifyWinner(bool is_player)
-    {
-        // DO SOMETHING HERE
-    }
 
     public void NotifyDraw()
     {

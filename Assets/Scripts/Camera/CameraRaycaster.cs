@@ -5,9 +5,12 @@ using UnityEngine;
 public class CameraRaycaster : MonoBehaviour
 {
     [SerializeField] private LayerMask field_layer;
+    private bool cast = true;
     // Update is called once per frame
     void Update()
     {
+        if (!cast) return;
+
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -21,4 +24,8 @@ public class CameraRaycaster : MonoBehaviour
 //#elif (UNITY_ANDROID || UNITY_IOS)
 //#endif
     }
+
+    public void EnableCasting() => cast = true;
+    public void DisableCasting() => cast = false;
+
 }

@@ -51,8 +51,6 @@ public class EnergyBar : MonoBehaviour, ISideSwitcher
         max_energy = GameManager.GetInstance().GetAttacker() == GetFaction() ? Constants.ATTACKER__MAXIMUM_ENGERGY : Constants.DEFENDER__MAXIMUM_ENERGY;
 
         SetNumEnergy(max_energy);
-
-        StartFill();
     }
 
     public void StartFill(int number = 0, float initial_fill = 0f)
@@ -61,6 +59,14 @@ public class EnergyBar : MonoBehaviour, ISideSwitcher
         if (number >= cells.Length) return;
 
         cells[number].GetComponent<EnergyCell>().StartFilling(this, number, initial_fill);
+    }
+
+    public void Empty()
+    {
+        for (int i = 0; i < max_energy; i++)
+        {
+            cells[i].GetComponent<EnergyCell>().EmptyCell();
+        }
     }
 
     public bool CanUseEnergy(int amount)
