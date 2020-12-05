@@ -16,52 +16,63 @@ public class MazeGenerator : MonoBehaviour
         MazeCell[,] grid = new MazeCell[15, 10];
         Build(grid);
 
-        GenerateMaze(grid);
+        GenerateMaze(grid, new Vector2(0, 4));
     }
 
-    private void GenerateMaze(MazeCell[,] grid)
+    private void GenerateMaze(MazeCell[,] grid, Vector2 starting_position)
     {
-        int chosen_x = Random.Range(0, grid.GetLength(1));
-        int chosen_y = Random.Range(0, grid.GetLength(0));
 
         Stack<Vector2> positions = new Stack<Vector2>();
         HashSet<Vector2> visited = new HashSet<Vector2>();
 
-        positions.Push(new Vector2(chosen_y, chosen_x));
+        positions.Push(starting_position);
 
-        while (positions.Count > 0)
+        StartCoroutine(BuildMaze(0.1f));
+        
+        IEnumerator BuildMaze(float wait_time)
         {
-            Vector2 node = positions.Pop();
-            if (visited.Contains(node)) continue;
-
-            visited.Add(node);
-
-            List<Vector2> neighbors = GetNeighbors(node);
-            neighbors = neighbors.OrderBy(x => Guid.NewGuid()).ToList();
-
-            bool pushed = false;
-            foreach (Vector2 _ in neighbors)
+            while (positions.Count > 0)
             {
-                if (!visited.Contains(_))
+                Vector2 node = positions.Pop();
+                if (visited.Contains(node)) continue;
+
+                visited.Add(node);
+
+                List<Vector2> neighbors = GetNeighbors(node);
+                neighbors = neighbors.OrderBy(x => Guid.NewGuid()).ToList();
+
+                Vector2 random_node = neighbors[Random.Range(0, neighbors.Count)];
+
+                if (Random.Range(0, 2) == 1)
                 {
-                    pushed = true;
-                    positions.Push(_);
+                    grid[(int)node.x, (int)node.y].RemoveWall(GetDirection(node, random_node));
+                    grid[(int)random_node.x, (int)random_node.y].RemoveWall(GetOpposite(GetDirection(node, random_node)));
+                }
+
+                bool pushed = false;
+                foreach (Vector2 _ in neighbors)
+                {
+                    if (!visited.Contains(_))
+                    {
+                        pushed = true;
+                        positions.Push(_);
+                    }
+                }
+
+                yield return new WaitForSeconds(wait_time);
+
+                if (pushed)
+                {
+                    Vector2 chosen = positions.Peek();
+
+                    MazeCell c = grid[(int)chosen.x, (int)chosen.y];
+
+                    grid[(int)node.x, (int)node.y].RemoveWall(GetDirection(node, chosen));
+                    c.RemoveWall(GetOpposite(GetDirection(node, chosen)));
                 }
             }
 
-            if (pushed)
-            {
-                Vector2 chosen = positions.Peek();
-
-                MazeCell c = grid[(int)chosen.x, (int)chosen.y];
-
-                grid[(int)node.x, (int)node.y].RemoveWall(GetDirection(node, chosen));
-                c.RemoveWall(GetOpposite(GetDirection(node, chosen)));
-            }
         }
-        
-
-
         List<Vector2> GetNeighbors(Vector2 position)
         {
             List<Vector2> res = new List<Vector2>();
