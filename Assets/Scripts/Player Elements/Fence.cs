@@ -15,6 +15,8 @@ public class Fence : Element
 
     void OnTriggerEnter(Collider collision)
     {
+        if (GameManager.GetInstance().IsPenalty()) return;
+
         if (collision.CompareTag("Soldier") && collision.GetComponent<Element>().GetFaction() != GetFaction())
         {
             collision.GetComponent<Soldier>().Bench(true);

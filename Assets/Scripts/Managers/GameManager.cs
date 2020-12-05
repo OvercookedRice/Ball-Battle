@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class GameManager : MonoBehaviour
@@ -50,56 +51,111 @@ public class GameManager : MonoBehaviour
         soldiers = new List<Soldier>();
         players = new List<Player>();
 
-        StartPenalty();
+        attacker = Faction.Opponent;
+    }
+
+    private void ClearLists(bool clear_player)
+    {
+        soldiers.Clear();
+        attackers.Clear();
+
+        if (clear_player)
+            players.Clear();
+    }
+
+    public void ChangeScene(string scene_name)
+    {
+        if (scene_name == Constants.MAIN_GAME_SCENE)
+        {
+            time_counter = null;
+            ClearLists(true);
+
+            SceneManager.LoadScene(Constants.MAIN_GAME_SCENE);
+            StartOver();
+        }
+        else if (scene_name == Constants.PENALTY_GAME_SCENE)
+        {
+            time_counter = null;
+            ClearLists(true);
+
+            SceneManager.LoadScene(Constants.PENALTY_GAME_SCENE);
+            StartPenalty();
+        }
+        else if (scene_name == Constants.MENU_SCENE)
+        {
+            SceneManager.LoadScene(Constants.MENU_SCENE);
+        }
     }
 
     public void StartOver()
     {
-        playing_regular_game = true;
+        StartCoroutine(WaitAndSetting());
 
-        match_holder.ShowScore();
-
-        is_wiping_lists = true;
-
-        foreach(Soldier _ in soldiers)
+        IEnumerator WaitAndSetting()
         {
-            _.Bench(true);
+
+            while(time_counter == null)
+            {
+                yield return null;
+            }
+
+            playing_regular_game = true;
+
+            match_holder.ShowScore();
+
+            is_wiping_lists = true;
+
+            foreach (Soldier _ in soldiers)
+            {
+                _.Bench(true);
+            }
+
+            is_wiping_lists = false;
+            if (ball != null)
+            {
+                Destroy(ball.gameObject);
+                ball = null;
+            }
+
+            ClearLists(false);
+
+            defender_fence = null;
+            defender_gate = null;
+            defender_field = null;
+
+            attacker = (attacker == Faction.Player ? Faction.Opponent : Faction.Player);
+
+            foreach (Player _ in players)
+            {
+                _.OnNewMatch();
+                _.Discharge();
+            }
+
+            time_counter.TeaBreak();
         }
-
-        is_wiping_lists = false;
-        if (ball != null)
-        {
-            Destroy(ball.gameObject);
-            ball = null;
-        }
-
-        soldiers.Clear();
-        attackers.Clear();
-
-        defender_fence = null;
-        defender_gate = null;
-        defender_field = null;
-
-        attacker = (attacker == Faction.Player ? Faction.Opponent : Faction.Player);
-
-        foreach (Player _ in players)
-        {
-            _.OnNewMatch();
-            _.Discharge();
-        }
-
-        time_counter.TeaBreak();
     }
     public void StartPenalty()
     {
-        playing_regular_game = false;
+        StartCoroutine(WaitAndSetting());
 
-        foreach (Player _ in players)
+        IEnumerator WaitAndSetting()
         {
-            _.OnNewMatch();
-        }
+            playing_regular_game = false;
 
-        time_counter.TeaBreak();
+            while (time_counter == null)
+            {
+                yield return null;
+            }
+
+            attacker = Faction.Player;
+
+            foreach (Player _ in players)
+            {
+                _.OnNewMatch();
+            }
+
+            time_counter.TeaBreak();
+        }
     }
     public void StartMatch()
     {
@@ -111,10 +167,6 @@ public class GameManager : MonoBehaviour
             }
 
             match_holder.HideScore();
-        }
-        else
-        {
-
         }
 
         time_counter.StartOver();
@@ -221,15 +273,30 @@ public class GameManager : MonoBehaviour
     public void NotifyDraw()
     {
         // GO TO THE PROCEDURAL GENERATOR THING
+        ChangeScene(Constants.PENALTY_GAME_SCENE);
     }
 
     public void NotifyMatchWinner(MatchScenario scenario)
     {
-        match_holder.NotifyMatchOver(scenario);
-
-        if (!match_holder.GameOver())
+        if (playing_regular_game)
         {
-            StartOver();
+            match_holder.NotifyMatchOver(scenario);
+
+            if (!match_holder.GameOver())
+            {
+                StartOver();
+            }
+        }
+        else
+        {
+            if (scenario == MatchScenario.Draw)
+            {
+                match_holder.NotifyPenaltyLose();
+            }
+            else
+            {
+                match_holder.NotifyPenaltyWon();
+            }
         }
     }
     /******************************************

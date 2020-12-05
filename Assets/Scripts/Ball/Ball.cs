@@ -24,6 +24,15 @@ public class Ball : MonoBehaviour
         passing_target = null;
     }
 
+    public void Attach(ControlledSoldier to)
+    {
+        if (transform.parent != null) return;
+
+        transform.parent = to.transform;
+
+        transform.localPosition = new Vector3(0, transform.localPosition.y, 1.25f);
+    }
+
     public void Detach()
     {
         transform.parent = null;

@@ -8,6 +8,7 @@ TagManager:
   - Fence
   - Gate
   - Ball
+  - ControlledSoldier
   layers:
   - Default
   - TransparentFX

@@ -14,6 +14,7 @@ public class TimeCounter : MonoBehaviour
     void Start()
     {
         StartOver();
+        Debug.Log("here");
         GameManager.GetInstance().RegisterTimeCounter(this);
     }
 
@@ -56,7 +57,11 @@ public class TimeCounter : MonoBehaviour
         if (!counting) return;
 
         elapsed_time += Time.deltaTime;
-        time_indication.text = (int)(Constants.MATCH__TIME_LIMIT - elapsed_time) + "s";
+
+        int time_left = (int)(Constants.MATCH__TIME_LIMIT - elapsed_time);
+        time_left = time_left < 0 ? 0 : time_left;
+
+        time_indication.text = time_left + "s";
 
         if (elapsed_time >= Constants.MATCH__TIME_LIMIT)
         {

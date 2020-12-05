@@ -35,6 +35,8 @@ public class Field : Element
 
     public void Spawn(Vector3 pos)
     {
+        if (GameManager.GetInstance().IsPenalty()) return;
+
         bool is_defender = (GetFaction() == GameManager.GetInstance().GetAttacker() ? false : true);
 
         if (parent.Energy.CanUseEnergy(is_defender ? Constants.DEFENDER__ENERGY_COST_TO_SPAWN : Constants.ATTACKER__ENERGY_COST_TO_SPAWN))

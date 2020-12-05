@@ -1,5 +1,9 @@
 ﻿public class Constants
 {
+    public const string MAIN_GAME_SCENE = "MainScene";
+    public const string PENALTY_GAME_SCENE = "PenaltyScene";
+    public const string MENU_SCENE = "MenuScene";
+
     public const float ATTACKER__ENERGY_REGENERATION_RATE = 0.5f;
     public const float ATTACKER__SPAWN_TIME = 0.5f;
     public const float ATTACKER__SQUARE_DISTANCE_TO_CAPTURE_BALL = 2f;

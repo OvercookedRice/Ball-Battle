@@ -10,68 +10,77 @@ public class MazeGenerator : MonoBehaviour
     [SerializeField] private int cell_size = 1;
     [SerializeField] private MazeCell cell;
     [SerializeField] private GameObject holder;
+    [SerializeField] private GameObject controlled_soldier;
+
+    [SerializeField] private Vector2 starting_point;
 
     void Start()
     {
-        MazeCell[,] grid = new MazeCell[15, 10];
+        MazeCell[,] grid = new MazeCell[14, 10];
         Build(grid);
 
-        GenerateMaze(grid, new Vector2(0, 4));
+        List<Vector2> goal_position = new List<Vector2>();
+        goal_position.Add(new Vector2(13, 4));
+        goal_position.Add(new Vector2(13, 5));
+
+        GenerateMaze(grid, starting_point, goal_position);
+
+        Vector3 spawn_ball_position = starting_point;
+        for (int i = 0; i < 10; i++)
+        {
+            int x = Random.Range(0, grid.GetLength(0));
+            int y = Random.Range(0, grid.GetLength(1));
+
+            Vector3 pos = grid[x, y].transform.position;
+            if (pos != grid[(int)starting_point.x, (int)starting_point.y].transform.position && 
+                !goal_position.Contains(pos))
+            {
+                spawn_ball_position = pos;
+                break;
+            }
+        }
+
+        GameManager.GetInstance().SpawnBall(spawn_ball_position);
+
+         Instantiate(controlled_soldier, grid[(int)starting_point.x, (int)starting_point.y].transform.position + Vector3.up * controlled_soldier.GetComponentInChildren<MeshRenderer>().bounds.extents.y, Quaternion.identity);
     }
 
-    private void GenerateMaze(MazeCell[,] grid, Vector2 starting_position)
+    private void GenerateMaze(MazeCell[,] grid, Vector2 starting_position, List<Vector2> goal_position)
     {
 
-        Stack<Vector2> positions = new Stack<Vector2>();
+        //Stack<Vector2> positions = new Stack<Vector2>();
         HashSet<Vector2> visited = new HashSet<Vector2>();
 
-        positions.Push(starting_position);
+        //positions.Push(starting_position);
+        DepthFirstTraversal(starting_position);
 
-        StartCoroutine(BuildMaze(0.1f));
-        
-        IEnumerator BuildMaze(float wait_time)
+        // Support local functions
+        void DepthFirstTraversal(Vector2 node)
         {
-            while (positions.Count > 0)
+            //Vector2 node = positions.Pop();
+            if (visited.Contains(node)) return;
+            visited.Add(node);
+
+            if (goal_position.Contains(node))
             {
-                Vector2 node = positions.Pop();
-                if (visited.Contains(node)) continue;
-
-                visited.Add(node);
-
-                List<Vector2> neighbors = GetNeighbors(node);
-                neighbors = neighbors.OrderBy(x => Guid.NewGuid()).ToList();
-
-                Vector2 random_node = neighbors[Random.Range(0, neighbors.Count)];
-
-                if (Random.Range(0, 2) == 1)
-                {
-                    grid[(int)node.x, (int)node.y].RemoveWall(GetDirection(node, random_node));
-                    grid[(int)random_node.x, (int)random_node.y].RemoveWall(GetOpposite(GetDirection(node, random_node)));
-                }
-
-                bool pushed = false;
-                foreach (Vector2 _ in neighbors)
-                {
-                    if (!visited.Contains(_))
-                    {
-                        pushed = true;
-                        positions.Push(_);
-                    }
-                }
-
-                yield return new WaitForSeconds(wait_time);
-
-                if (pushed)
-                {
-                    Vector2 chosen = positions.Peek();
-
-                    MazeCell c = grid[(int)chosen.x, (int)chosen.y];
-
-                    grid[(int)node.x, (int)node.y].RemoveWall(GetDirection(node, chosen));
-                    c.RemoveWall(GetOpposite(GetDirection(node, chosen)));
-                }
+                grid[(int)node.x, (int)node.y].RemoveWall(Direction.North);
             }
 
+            List<Vector2> neighbors = GetNeighbors(node);
+            neighbors = neighbors.OrderBy(x => Guid.NewGuid()).ToList();
+
+            foreach (Vector2 _ in neighbors)
+            {
+                if (!visited.Contains(_))
+                {
+                    MazeCell c = grid[(int)_.x, (int)_.y];
+
+                    grid[(int)node.x, (int)node.y].RemoveWall(GetDirection(node, _));
+                    c.RemoveWall(GetOpposite(GetDirection(node, _)));
+
+                    DepthFirstTraversal(_);
+                }
+            }
         }
         List<Vector2> GetNeighbors(Vector2 position)
         {
@@ -84,7 +93,6 @@ public class MazeGenerator : MonoBehaviour
 
             return res;
         }
-
         Direction GetDirection(Vector2 initial, Vector2 destination)
         {
             if (initial.x + 1 == destination.x) return Direction.North;
@@ -92,7 +100,6 @@ public class MazeGenerator : MonoBehaviour
             if (initial.y + 1 == destination.y) return Direction.East;
             return Direction.West;
         }
-
         Direction GetOpposite(Direction dir)
         {
             switch (dir)

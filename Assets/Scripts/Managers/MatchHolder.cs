@@ -100,6 +100,18 @@ public class MatchHolder : MonoBehaviour
         winner_notification.text = final_text;
     }
 
+    public void NotifyPenaltyWon()
+    {
+        overlay_image.gameObject.SetActive(true);
+        winner_notification.text = "Player won!";
+    }
+
+    public void NotifyPenaltyLose()
+    {
+        overlay_image.gameObject.SetActive(true);
+        winner_notification.text = "Player lost...";
+    }
+
     public bool GameOver() => matches >= Constants.MATCHES;
 }
 

@@ -28,6 +28,26 @@ public class MazeCell : MonoBehaviour
         }
     }
 
+    public bool HasWall(Direction direction)
+    {
+        switch (direction)
+        {
+            case Direction.North:
+                return north_wall.activeInHierarchy;
+            case Direction.East:
+                return east_wall.activeInHierarchy;
+            case Direction.South:
+                return south_wall.activeInHierarchy;
+           default:
+                return west_wall.activeInHierarchy;
+        }
+    }
+
+    public int GetWays()
+    {
+        return (!north_wall.activeInHierarchy ? 1 : 0) + (!east_wall.activeInHierarchy ? 1 : 0) + (!south_wall.activeInHierarchy ? 1 : 0) + (!west_wall.activeInHierarchy ? 1 : 0);
+    }
+
     public bool WallRemoved() => !(north_wall.activeInHierarchy && east_wall.activeInHierarchy && south_wall.activeInHierarchy && west_wall.activeInHierarchy);
 
     public void RemoveAllWalls()
