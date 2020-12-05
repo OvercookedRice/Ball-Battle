@@ -11,6 +11,7 @@ public class CameraRaycaster : MonoBehaviour
     {
         if (!cast) return;
 
+#if UNITY_STANDALONE || UNITY_EDITOR
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -20,9 +21,18 @@ public class CameraRaycaster : MonoBehaviour
                 info.collider.GetComponent<Field>().Spawn(info.point);
             }
         }
-//#if (UNITY_STANDALONE || UNITY_EDITOR)
-//#elif (UNITY_ANDROID || UNITY_IOS)
-//#endif
+#elif UNITY_ANDROID || UNITY_IOS
+
+        if (Input.touchCount > 0)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
+            RaycastHit info;
+            if (Physics.Raycast(ray, out info, 100, field_layer))
+            {
+                info.collider.GetComponent<Field>().Spawn(info.point);
+            }
+        }       
+#endif
     }
 
     public void EnableCasting() => cast = true;

@@ -8,20 +8,29 @@ public class ControlledSoldier : MonoBehaviour
     private Rigidbody rb;
     [SerializeField] private GameObject indicator = null;
     [SerializeField] private GameObject highlighter = null;
+
+    [SerializeField] private Joystick joystick;
+
     private bool got_ball = false;
     void Start()
     {
         indicator.SetActive(false);
         highlighter.SetActive(false);
 
+#if UNITY_ANDROID || UNITY_IOS
+        joystick = FindObjectOfType<Joystick>();
+#endif
         got_ball = false;
         rb = GetComponent<Rigidbody>();
     }
     // Update is called once per frame
     void Update()
     {
+#if UNITY_EDITOR || UNITY_STANDALONE
         Vector3 direction = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-
+#elif UNITY_ANDROID || UNITY_IOS
+        Vector3 direction = new Vector3(joystick.Horizontal, 0, joystick.Vertical);
+#endif
         if (direction == Vector3.zero)
         {
             rb.velocity = Vector3.zero;
