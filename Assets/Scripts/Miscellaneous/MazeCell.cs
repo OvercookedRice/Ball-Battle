@@ -29,4 +29,12 @@ public class MazeCell : MonoBehaviour
     }
 
     public bool WallRemoved() => !(north_wall.activeInHierarchy && east_wall.activeInHierarchy && south_wall.activeInHierarchy && west_wall.activeInHierarchy);
+
+    public void RemoveAllWalls()
+    {
+        north_wall.SetActive(false);
+        east_wall.SetActive(false);
+        west_wall.SetActive(false);
+        south_wall.SetActive(false);
+    }
 }
