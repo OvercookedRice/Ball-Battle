@@ -55,7 +55,7 @@ public class EnergyBar : MonoBehaviour, ISideSwitcher
 
     public void StartFill(int number = 0, float initial_fill = 0f)
     {
-        if (number > 0) num_usable_energy = number;
+        if (number >= 0) num_usable_energy = number;
         if (number >= cells.Length) return;
 
         cells[number].GetComponent<EnergyCell>().StartFilling(this, number, initial_fill);

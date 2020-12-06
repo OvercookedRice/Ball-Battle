@@ -44,6 +44,6 @@ public class Field : Element
             GameObject _ = soldier.Spawn(pos + Vector3.up * soldier.GetComponentInChildren<MeshRenderer>().bounds.extents.y);
 
             _.GetComponent<ISideSwitcher>().Switch(parent);
-        }        
+        }
     }
 }
