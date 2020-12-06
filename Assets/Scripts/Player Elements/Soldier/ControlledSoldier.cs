@@ -10,12 +10,14 @@ public class ControlledSoldier : MonoBehaviour
     [SerializeField] private GameObject highlighter = null;
 
     [SerializeField] private Joystick joystick;
-
+    [SerializeField] private GameField game_field;
     private bool got_ball = false;
     void Start()
     {
         indicator.SetActive(false);
         highlighter.SetActive(false);
+
+        game_field = FindObjectOfType<GameField>();
 
 #if UNITY_ANDROID || UNITY_IOS
         joystick = FindObjectOfType<Joystick>();
@@ -40,14 +42,14 @@ public class ControlledSoldier : MonoBehaviour
         {
             transform.forward = direction.normalized;
 
-            rb.velocity = direction.normalized * Constants.ATTACKER__NORMAL_SPEED_MULTIPLIER;
+            rb.velocity = direction.normalized * Constants.ATTACKER__NORMAL_SPEED_MULTIPLIER * game_field.GetScale();
             indicator?.SetActive(true);
         }
 
         if (!got_ball)
         {
             Ball b = GameManager.GetInstance().GetBall();
-            if ((transform.position - b.transform.position).sqrMagnitude <= Constants.ATTACKER__SQUARE_DISTANCE_TO_CAPTURE_BALL)
+            if ((transform.position - b.transform.position).sqrMagnitude <= Constants.ATTACKER__SQUARE_DISTANCE_TO_CAPTURE_BALL * game_field.GetScale())
             {
                 b.Attach(this);
                 highlighter?.SetActive(true);

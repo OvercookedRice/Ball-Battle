@@ -9,12 +9,12 @@ public class TimeCounter : MonoBehaviour
     [SerializeField] private TMP_Text countdown_text;
 
     private float elapsed_time;
+    private bool done_teabreak = false;
     private bool counting = false;
     // Start is called before the first frame update
     void Start()
     {
         StartOver();
-        Debug.Log("here");
         GameManager.GetInstance().RegisterTimeCounter(this);
     }
 
@@ -29,10 +29,12 @@ public class TimeCounter : MonoBehaviour
 
         IEnumerator Break()
         {
-            counting = false;
+            DisableCounting();
+            done_teabreak = false;
+
             time_indication.text = (int)Constants.MATCH__TIME_LIMIT + "s";
 
-            Camera.main.gameObject.GetComponent<CameraRaycaster>().DisableCasting();
+            GameManager.GetInstance().GetCameraRaycaster().DisableCasting();
             countdown_text.text = "";
 
             yield return new WaitForSeconds(1.25f);
@@ -43,11 +45,12 @@ public class TimeCounter : MonoBehaviour
             }
 
             countdown_text.text = "";
-            Camera.main.gameObject.GetComponent<CameraRaycaster>().EnableCasting();
+            GameManager.GetInstance().GetCameraRaycaster().EnableCasting();
 
             GameManager.GetInstance().StartMatch();
 
-            counting = true;
+            done_teabreak = true;
+            EnableCounting();
         }
     }
 
@@ -67,5 +70,24 @@ public class TimeCounter : MonoBehaviour
         {
             GameManager.GetInstance().NotifyMatchWinner(MatchScenario.Draw);
         }
+    }
+
+    public bool IsCounting() => counting;
+    public void EnableCounting()
+    {
+        if (done_teabreak)
+            counting = true;
+        else
+            TeaBreak();
+    }
+    public void DisableCounting() => counting = false;
+    public void ForceDisableCounting()
+    {
+        if (!done_teabreak)
+        {
+            StopAllCoroutines();
+        }
+
+        DisableCounting();
     }
 }

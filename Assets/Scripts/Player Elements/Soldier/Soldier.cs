@@ -17,7 +17,28 @@ public class Soldier : Element
     {
         parent = player;
 
+        // Set the scale back to the field's relative scale
+        Transform _parent = transform.parent;
+        transform.parent = null;
+
+        transform.localScale = Vector3.one * GetFieldScale();
+
+        transform.parent = _parent;
+        //-----------------------------------------------
+
         GameManager GM = GameManager.GetInstance();
+
+        if (GM.ARMode)
+        {
+            float y_extent = GetComponentInChildren<MeshRenderer>().bounds.extents.y;
+
+            GameField f = parent.GetGameField();
+
+            transform.position = new Vector3(transform.position.x, f.transform.position.y + y_extent, transform.position.z);
+
+        }
+        
+
         mesh_renderer.material = GM.GetFactionMaterial(parent.GetFaction());
 
         GM.RegisterSoldier(this);
@@ -96,12 +117,13 @@ public class Soldier : Element
             state_machine.ChangeState((state_machine as AttackerStateMachine).CaughtState);
         }
     }
-
     public void Chase()
     {
         state_machine.ChangeState((state_machine as DefenderStateMachine).ChaseState);
     }
-   
+
+    public float GetFieldScale() => parent.GetFieldScale();
+
     void OnEnable()
     {
         DisableDetection();

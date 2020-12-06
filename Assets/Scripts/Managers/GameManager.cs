@@ -7,6 +7,11 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
+    public bool ARMode
+    {
+        get { return AR_mode; }
+    }
+
     private static GameManager instance = null;
     private Faction attacker = Faction.Opponent;
 
@@ -23,10 +28,16 @@ public class GameManager : MonoBehaviour
     private MatchHolder match_holder = null;
     private TimeCounter time_counter = null;
 
+    private XRRaycaster xr_raycaster = null;
+    private CameraRaycaster cm_raycaster = null;
+
+    private GameField game_field = null;
+
     private List<Player> players = null;
     private List<Soldier> attackers = null;
     private List<Soldier> soldiers = null;
 
+    private bool AR_mode = false;
     private bool is_wiping_lists = false;
     private bool playing_regular_game = true;
 
@@ -62,31 +73,6 @@ public class GameManager : MonoBehaviour
         if (clear_player)
             players.Clear();
     }
-
-    public void ChangeScene(string scene_name)
-    {
-        if (scene_name == Constants.MAIN_GAME_SCENE)
-        {
-            time_counter = null;
-            ClearLists(true);
-
-            SceneManager.LoadScene(Constants.MAIN_GAME_SCENE);
-            StartOver();
-        }
-        else if (scene_name == Constants.PENALTY_GAME_SCENE)
-        {
-            time_counter = null;
-            ClearLists(true);
-
-            SceneManager.LoadScene(Constants.PENALTY_GAME_SCENE);
-            StartPenalty();
-        }
-        else if (scene_name == Constants.MENU_SCENE)
-        {
-            SceneManager.LoadScene(Constants.MENU_SCENE);
-        }
-    }
-
     public void StartOver()
     {
         StartCoroutine(WaitAndSetting());
@@ -94,7 +80,7 @@ public class GameManager : MonoBehaviour
         IEnumerator WaitAndSetting()
         {
 
-            while(time_counter == null)
+            while (time_counter == null)
             {
                 yield return null;
             }
@@ -171,6 +157,118 @@ public class GameManager : MonoBehaviour
 
         time_counter.StartOver();
     }
+
+    public void PutGameField(Vector3 position, Quaternion rotation)
+    {
+        game_field.SetARPosition(position, rotation);
+        game_field.ToARPosition();
+
+        game_field.gameObject.SetActive(true);
+
+        ContinueGame();
+    }
+
+    /******************************************
+    *                                         *
+    *               SCENE SECTION             *
+    *                                         *
+    ******************************************/
+    public void ChangeScene(string scene_name)
+    {
+        AR_mode = false;
+        if (scene_name == Constants.MAIN_GAME_SCENE)
+        {
+            time_counter = null;
+            ClearLists(true);
+
+            SceneManager.LoadScene(Constants.MAIN_GAME_SCENE);
+
+#if UNITY_ANDROID || UNITY_IOS
+            SceneManager.LoadSceneAsync(Constants.AR_SCENE, LoadSceneMode.Additive);
+#endif
+            StartOver();
+        }
+        else if (scene_name == Constants.PENALTY_GAME_SCENE)
+        {
+            time_counter = null;
+            ClearLists(true);
+
+            SceneManager.LoadScene(Constants.PENALTY_GAME_SCENE);
+
+#if UNITY_ANDROID || UNITY_IOS
+            SceneManager.LoadSceneAsync(Constants.AR_SCENE, LoadSceneMode.Additive);
+#endif
+            StartPenalty();
+        }
+        else if (scene_name == Constants.MENU_SCENE)
+        {
+            SceneManager.LoadScene(Constants.MENU_SCENE);
+        }
+    }
+
+    public void ShowARScene()
+    {
+        AR_mode = true;
+
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName(Constants.AR_SCENE));
+
+        ToggleARObjects(true);
+
+        if (!xr_raycaster.HasPlacedField)
+        {
+            Time.timeScale = 0;
+
+            game_field?.gameObject.SetActive(false);
+            time_counter.ForceDisableCounting();
+        }
+        else
+        {
+            game_field.ToARPosition();
+        }
+
+    }
+
+    public void HideARScene()
+    {
+        AR_mode = false;
+
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName((playing_regular_game ? Constants.MAIN_GAME_SCENE : Constants.PENALTY_GAME_SCENE)));
+
+        if (!xr_raycaster.HasPlacedField)
+        {
+            Time.timeScale = 1;
+
+            game_field?.gameObject.SetActive(true);
+            time_counter.EnableCounting();
+        }
+        else
+        {
+            game_field.ToOriginalPosition();
+        }
+
+        ToggleARObjects(false);
+    }
+
+    public void ContinueGame()
+    {
+        Time.timeScale = 1;
+
+        time_counter.EnableCounting();
+    }
+
+    private void ToggleARObjects(bool on)
+    {
+        Scene ar_scene = SceneManager.GetSceneByName(Constants.AR_SCENE);
+
+        if (!ar_scene.IsValid()) return;
+
+        GameObject[] objects = ar_scene.GetRootGameObjects();
+        foreach (GameObject _ in objects)
+        {
+            _.SetActive(on);
+        }
+    }
+
     /******************************************
     *                                         *
     *            SPAWN BALL SECTION           *
@@ -264,6 +362,30 @@ public class GameManager : MonoBehaviour
     {
         this.time_counter = time_counter;
     }
+
+    public void RegisterXRRaycaster(XRRaycaster raycaster)
+    {
+        if (xr_raycaster == null)
+        {
+            xr_raycaster = raycaster;
+        }
+    }
+    public void UnregisterXRRaycaster()
+    {
+        xr_raycaster = null;
+    }
+    public void RegisterGameField(GameField field)
+    {
+        game_field = field;
+    }
+    public void UnregisterGameField()
+    {
+        game_field = null;
+    }
+    public void RegisterCameraRaycaster(CameraRaycaster raycaster)
+    {
+        cm_raycaster = raycaster;
+    }
     /******************************************
     *                                         *
     *           NOTIFICATION CENTER           *
@@ -326,6 +448,7 @@ public class GameManager : MonoBehaviour
         }
     }
     public Material GetGreyscaleMaterial() => greyscale_material;
-
+    public CameraRaycaster GetCameraRaycaster() => cm_raycaster;
+    public XRRaycaster GetXRRaycaster() => xr_raycaster;
     public bool IsPenalty() => !playing_regular_game;
 }

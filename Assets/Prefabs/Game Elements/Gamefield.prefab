@@ -126,6 +126,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1482977666366107260}
+  - component: {fileID: 7649854439444465620}
   m_Layer: 0
   m_Name: Gamefield
   m_TagString: Untagged
@@ -150,6 +151,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7649854439444465620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1482977666366107263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c62e1d851610324aaeb7eecebd2f14b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1482977666487352489
 GameObject:
   m_ObjectHideFlags: 0
@@ -290,7 +303,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57c2eef8e376b2d4aa4e638b0dfdda01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawn_offset: 4
   soldier: {fileID: 7472344239791818250, guid: 84291195cc136d14d93fd13dff7b6ed2, type: 3}
+  game_field: {fileID: 1482977666366107260}
 --- !u!1 &1482977667192764639
 GameObject:
   m_ObjectHideFlags: 0
@@ -554,6 +569,9 @@ MonoBehaviour:
   - {fileID: 316200975267742623}
   - {fileID: 1482977667366980493}
   - {fileID: 1482977667691666699}
+  - {fileID: 0}
+  indication_text: {fileID: 0}
+  game_field: {fileID: 7649854439444465620}
 --- !u!1 &1482977667691666699
 GameObject:
   m_ObjectHideFlags: 0
@@ -661,7 +679,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57c2eef8e376b2d4aa4e638b0dfdda01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawn_offset: 4
   soldier: {fileID: 7472344239791818250, guid: 84291195cc136d14d93fd13dff7b6ed2, type: 3}
+  game_field: {fileID: 1482977666366107260}
 --- !u!1 &1482977667893314850
 GameObject:
   m_ObjectHideFlags: 0
@@ -806,6 +826,9 @@ MonoBehaviour:
   - {fileID: 316200975309182979}
   - {fileID: 1482977667192764639}
   - {fileID: 1482977666840081110}
+  - {fileID: 0}
+  indication_text: {fileID: 0}
+  game_field: {fileID: 7649854439444465620}
 --- !u!1 &1482977667976483354
 GameObject:
   m_ObjectHideFlags: 0

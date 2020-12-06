@@ -92,26 +92,28 @@ public class AttackerMoveStraightState : State
     { }
     public override void Enter()
     {
+        state_machine.GetContext().EnableMovingDirection();
+
+        if (direction != default) return;
+
+        Soldier context = state_machine.GetContext();
+
         Fence target_fence = GameManager.GetInstance().GetDefenderFence();
 
-        Vector3 _ = target_fence.transform.position - state_machine.GetContext().transform.position;
-        direction = (_.z > 0f ? 1 : -1) * Vector3.forward;
+        Vector3 _ = (target_fence.transform.localPosition + target_fence.transform.parent.localPosition) - context.transform.localPosition;
 
-        state_machine.GetContext().transform.forward = direction;
-        state_machine.GetContext().EnableMovingDirection();
+        direction = (_.z > 0f ? 1 : -1) * context.GetPlayer().GetGameField().transform.forward;
     }
 
     public override void Exit()
     {
-        direction = Vector3.zero;
+        direction = default;
         state_machine.GetContext().DisableMovingDirection();
 
     }
 
     public override void StateUpdate()
     {
-        if (direction == Vector3.zero) return;
-
         Ball ball = GameManager.GetInstance().GetBall();
         if (ball != null && !ball.IsAttached())
         {
@@ -119,7 +121,10 @@ public class AttackerMoveStraightState : State
         }
         else
         {
-            state_machine.GetContext().transform.position += (direction * Constants.ATTACKER__NORMAL_SPEED_MULTIPLIER) * Time.deltaTime;
+            Soldier context = state_machine.GetContext();
+
+            context.transform.forward = direction;
+            context.transform.position += (direction * Constants.ATTACKER__NORMAL_SPEED_MULTIPLIER) * Time.deltaTime * context.GetFieldScale();
         }
     }
 }
@@ -148,7 +153,7 @@ public class AttackerChaseBallState : State
         {
             Soldier context = state_machine.GetContext();
 
-            if (ball_instance.SqrDistanceTo(context.transform) <= Constants.ATTACKER__SQUARE_DISTANCE_TO_CAPTURE_BALL)
+            if (ball_instance.SqrDistanceTo(context.transform) <= Constants.ATTACKER__SQUARE_DISTANCE_TO_CAPTURE_BALL * context.GetFieldScale())
             {
                 ball_instance.Attach(context);
             }
@@ -158,7 +163,7 @@ public class AttackerChaseBallState : State
                 direction = new Vector3(direction.x, 0f, direction.z);
 
                 context.transform.forward = direction;
-                context.transform.position += direction * Constants.ATTACKER__NORMAL_SPEED_MULTIPLIER * Time.deltaTime;
+                context.transform.position += direction * Constants.ATTACKER__NORMAL_SPEED_MULTIPLIER * Time.deltaTime * context.GetFieldScale();
             }
         }        
         else if (ball_instance.GetHolder() == state_machine.GetContext())
@@ -199,7 +204,7 @@ public class AttackerMoveTowardsTheGateState : State
         direction = new Vector3(direction.x, 0f, direction.z);
 
         context.transform.forward = direction;
-        context.transform.position += direction * Constants.ATTACKER__CARRY_SPEED_MULTIPLIER * Time.deltaTime;
+        context.transform.position += direction * Constants.ATTACKER__CARRY_SPEED_MULTIPLIER * Time.deltaTime * context.GetFieldScale();
     }
 }
 

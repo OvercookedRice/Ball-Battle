@@ -8,7 +8,9 @@ public class Player : MonoBehaviour
     [SerializeField] private Faction faction = Faction.Player;
     [SerializeField] private GameObject[] children_elements;
     [SerializeField] private TMP_Text indication_text;
-    
+
+    [SerializeField] private GameField game_field;
+
     public EnergyBar Energy
     {
         get { return energy_bar; }
@@ -36,6 +38,8 @@ public class Player : MonoBehaviour
         }
     }
 
+    public float GetFieldScale() => game_field.GetScale();
+    public GameField GetGameField() => game_field;
     public void Recharge()
     {
         energy_bar.StartFill();

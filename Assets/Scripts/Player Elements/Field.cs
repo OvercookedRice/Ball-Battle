@@ -7,6 +7,8 @@ public class Field : Element
 {
     [SerializeField] private float spawn_offset = 1.5f;
     [SerializeField] private GameObject soldier;
+    [SerializeField] private Transform game_field;
+
     public override void Switch(Player player)
     {
         // Store the side
@@ -20,8 +22,10 @@ public class Field : Element
             Vector3 extents = GetComponent<MeshRenderer>().bounds.extents;
 
             // Calculate the NEW extents with defined offset, so that the ball would be spawned somewhere better.
-            extents = new Vector3(extents.x - spawn_offset, 0f, extents.z - spawn_offset);
-            Vector3 randomized_position = transform.position + new Vector3(Random.Range(-extents.x, extents.x),
+            extents = new Vector3(Mathf.Abs(extents.x - spawn_offset), 0f, Mathf.Abs(extents.z - spawn_offset)) * parent.GetFieldScale();
+
+            Vector3 randomized_position = transform.position
+                                    + new Vector3(Random.Range(-extents.x, extents.x),
                                              0,
                                             Random.Range(-extents.z, extents.z));
 
@@ -42,6 +46,8 @@ public class Field : Element
         if (parent.Energy.CanUseEnergy(is_defender ? Constants.DEFENDER__ENERGY_COST_TO_SPAWN : Constants.ATTACKER__ENERGY_COST_TO_SPAWN))
         {
             GameObject _ = soldier.Spawn(pos + Vector3.up * soldier.GetComponentInChildren<MeshRenderer>().bounds.extents.y);
+
+            _.transform.parent = game_field;
 
             _.GetComponent<ISideSwitcher>().Switch(parent);
         }

@@ -6,22 +6,24 @@ using UnityEngine.XR.ARFoundation;
 [RequireComponent(typeof(ARRaycastManager))]
 public class XRRaycaster : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject placeObject;
-
-    public GameObject PlaceObject
+    public bool HasPlacedField
     {
-        get { return placeObject; }
-        set { placeObject = value; }
+        get { return game_field_placed; }
     }
 
     private ARRaycastManager raycast_manager;
+    [SerializeField] private ARPlaneManager plane_manager;
 
     private static List<ARRaycastHit> hits = new List<ARRaycastHit>();
+
+    private bool game_field_placed = false;
 
     private void Awake()
     {
         raycast_manager = GetComponent<ARRaycastManager>();
+        game_field_placed = false;
+
+        plane_manager.enabled = true;
     }
 
     private bool GetTouchPosition(out Vector2 touch_position)
@@ -38,14 +40,29 @@ public class XRRaycaster : MonoBehaviour
 
     private void Update()
     {
-        if (!GetTouchPosition(out Vector2 touch_position))
+        if (game_field_placed || !GetTouchPosition(out Vector2 touch_position))
             return;
 
-        if (raycast_manager.Raycast(touch_position, hits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon))
+        if (raycast_manager.Raycast(touch_position, hits, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinBounds))
         {
             var hit_pose = hits[0].pose;
 
-            Instantiate(placeObject, hit_pose.position, hit_pose.rotation);
+            GameManager.GetInstance().PutGameField(hit_pose.position, hit_pose.rotation);
+            game_field_placed = true;
+
+            plane_manager.SetTrackablesActive(false);
+            plane_manager.enabled = false;
         }
     }
+
+    private void OnEnable()
+    {
+        GameManager.GetInstance()?.RegisterXRRaycaster(this);
+    }
+
+    private void OnDestroy()
+    {
+        GameManager.GetInstance()?.UnregisterXRRaycaster();
+    }
+
 }

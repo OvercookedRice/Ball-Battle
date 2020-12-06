@@ -42,7 +42,9 @@ public class MazeGenerator : MonoBehaviour
 
         GameManager.GetInstance().SpawnBall(spawn_ball_position);
 
-         Instantiate(controlled_soldier, grid[(int)starting_point.x, (int)starting_point.y].transform.position + Vector3.up * controlled_soldier.GetComponentInChildren<MeshRenderer>().bounds.extents.y, Quaternion.identity);
+         Instantiate(controlled_soldier, grid[(int)starting_point.x, (int)starting_point.y].transform.position + Vector3.up * controlled_soldier.GetComponentInChildren<MeshRenderer>().bounds.extents.y, Quaternion.identity, transform);
+
+        transform.parent = FindObjectOfType<GameField>().transform;
     }
 
     private void GenerateMaze(MazeCell[,] grid, Vector2 starting_position, List<Vector2> goal_position)

@@ -21,7 +21,7 @@ public class DefenderStateMachine : StateMachine
 
     public DefenderStateMachine(Soldier context) : base(context)
     {
-        original_position = context.transform.position;
+        original_position = context.transform.localPosition;
     }
 
     public override void ChangeState()
@@ -95,7 +95,7 @@ public class DefenderChase : State
             Vector3 direction = (holder.position - context.transform.position);
             direction = new Vector3(direction.x, 0f, direction.z);
 
-            if (direction.sqrMagnitude <= Constants.DEFENDER__SQUARE_DISTANCE_TO_CATCH)
+            if (direction.sqrMagnitude <= Constants.DEFENDER__SQUARE_DISTANCE_TO_CATCH * context.GetFieldScale())
             {
                 holder.GetComponent<Soldier>().Caught();
 
@@ -105,7 +105,7 @@ public class DefenderChase : State
             {
                 direction = direction.normalized;
                 context.transform.forward = direction;
-                context.transform.position += direction * Constants.DEFENDER__NORMAL_SPEED_MULTIPLIER * Time.deltaTime;
+                context.transform.position += direction * Constants.DEFENDER__NORMAL_SPEED_MULTIPLIER * Time.deltaTime * context.GetFieldScale();
             }
         }
         else
@@ -167,19 +167,19 @@ public class DefenderInactivate : State
         DefenderStateMachine machine = state_machine as DefenderStateMachine;
         Soldier context = machine.GetContext();
 
-        Vector3 direction = (machine.GetOriginalPos() - context.transform.position);
+        Vector3 direction = (machine.GetOriginalPos() - context.transform.localPosition);
         direction = new Vector3(direction.x, 0f, direction.z);
 
         if (direction.sqrMagnitude <= 0.01f)
         {
-            context.transform.position = machine.GetOriginalPos();
+            context.transform.localPosition = machine.GetOriginalPos();
         }
         else
         {
             direction = direction.normalized;
 
             context.transform.forward = direction;
-            context.transform.position += direction * Constants.DEFENDER__RETURN_TO_ORIGINAL_POSITION_SPEED_MULTIPLIER * Time.deltaTime;
+            context.transform.localPosition += direction * Constants.DEFENDER__RETURN_TO_ORIGINAL_POSITION_SPEED_MULTIPLIER * Time.deltaTime * context.GetFieldScale();
         }
     }
 }
